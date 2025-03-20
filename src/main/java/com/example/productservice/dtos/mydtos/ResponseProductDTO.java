@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponseProductDTO {
-    private int id;
+    private long id;
     private String name;
     private double price;
     private String details;
@@ -20,6 +20,6 @@ public class ResponseProductDTO {
         this.setPrice(product.getPrice());
         this.setDetails(product.getDescription());
         this.setImage(product.getImageURL());
-        this.setCategory(product.getCategory());
+        this.setCategory(product.getCategory().getName());
     }
 }

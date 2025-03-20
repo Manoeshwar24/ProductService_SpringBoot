@@ -48,7 +48,7 @@ public class ProductServiceFakeStoreImpl implements ProductServiceInterface {
         restTemplate.put("https://fakestoreapi.com/products/" + product.getId(),
                 toReplaceDTO, FakeStoreProductDTO.class);
 
-        Product replacedProduct = this.getSingleProduct(product.getId());
+        Product replacedProduct = this.getSingleProduct((int)product.getId());
 
         return replacedProduct;
     }
