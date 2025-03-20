@@ -1,6 +1,7 @@
 package com.example.productservice.controllers;
 
 import com.example.productservice.dtos.mydtos.*;
+import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductServiceInterface;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public GetSingleProductResponseDTO getSingleProduct(@PathVariable int id){
+    public GetSingleProductResponseDTO getSingleProduct(@PathVariable Long id) throws ProductNotFoundException {
 
         Product requestedProduct = productService.getSingleProduct(id);
         GetSingleProductResponseDTO responseDTO = new GetSingleProductResponseDTO();
@@ -68,7 +69,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public DeleteProductResponseDTO deleteProduct(@PathVariable int id){
+    public DeleteProductResponseDTO deleteProduct(@PathVariable Long id){
 
         String responseMessage = productService.deleteProduct(id);
 
@@ -79,7 +80,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public PatchProductResponseDTO updateProduct(@PathVariable int id, @RequestBody PatchProductRequestDTO patchProductRequestDTO){
+    public PatchProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO){
         Product toUpdateProduct = patchProductRequestDTO.getProductDTO().toProduct();
 
         Product updatedProduct = productService.partialUpdateProduct(toUpdateProduct);
@@ -95,7 +96,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public PutProductResponseDTO replaceProduct(@PathVariable int id, @RequestBody PutProductRequestDTO putProductRequestDTO){
+    public PutProductResponseDTO replaceProduct(@PathVariable Long id, @RequestBody PutProductRequestDTO putProductRequestDTO)
+    throws ProductNotFoundException {
 
         Product toReplaceProduct = putProductRequestDTO.getRequestProductDTO().toProduct();
         //setting id from the path variable
