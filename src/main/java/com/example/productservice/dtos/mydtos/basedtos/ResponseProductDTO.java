@@ -1,4 +1,4 @@
-package com.example.productservice.dtos.mydtos;
+package com.example.productservice.dtos.mydtos.basedtos;
 
 import com.example.productservice.models.Product;
 import lombok.Getter;
@@ -7,12 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponseProductDTO {
-    private long id;
+    private Long id;
     private String name;
-    private double price;
+    private Double price;
     private String details;
     private String image;
-    private String category;
+    private String categoryName;
+    private String categoryDescription;
 
     public void fromProduct(Product product){
         this.setId(product.getId());
@@ -20,6 +21,7 @@ public class ResponseProductDTO {
         this.setPrice(product.getPrice());
         this.setDetails(product.getDescription());
         this.setImage(product.getImageURL());
-        this.setCategory(product.getCategory().getName());
+        this.setCategoryName(product.getCategory().getName());
+        this.setCategoryDescription(product.getCategory().getDescription());
     }
 }

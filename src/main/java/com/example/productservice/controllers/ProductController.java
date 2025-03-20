@@ -1,6 +1,8 @@
 package com.example.productservice.controllers;
 
 import com.example.productservice.dtos.mydtos.*;
+import com.example.productservice.dtos.mydtos.basedtos.RequestProductDTO;
+import com.example.productservice.dtos.mydtos.basedtos.ResponseProductDTO;
 import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductServiceInterface;

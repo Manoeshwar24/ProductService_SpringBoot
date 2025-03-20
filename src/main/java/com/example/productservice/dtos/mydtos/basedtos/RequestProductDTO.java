@@ -1,4 +1,4 @@
-package com.example.productservice.dtos.mydtos;
+package com.example.productservice.dtos.mydtos.basedtos;
 
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
@@ -10,27 +10,32 @@ import lombok.Setter;
 public class RequestProductDTO {
     private String name;
     private double price;
-    private String details;
+    private String detail;
     private String image;
-    private String category;
+    private String categoryName;
+    private String categoryDescription;
 
     public void fromProduct(Product product){
         this.setName(product.getTitle());
         this.setPrice(product.getPrice());
-        this.setDetails(product.getDescription());
+        this.setDetail(product.getDescription());
         this.setImage(product.getImageURL());
-        this.setCategory(product.getCategory().getName());
+
+        Category category = product.getCategory();
+        this.setCategoryName(category.getName());
+        this.setCategoryDescription(category.getDescription());
     }
 
     public Product toProduct(){
         Product product = new Product();
         product.setTitle(this.getName());
         product.setPrice(this.getPrice());
-        product.setDescription(this.getDetails());
+        product.setDescription(this.getDetail());
         product.setImageURL(this.getImage());
 
         Category category = new Category();
-        category.setName(this.getCategory());
+        category.setName(this.getCategoryName());
+        category.setDescription(this.getCategoryDescription());
         product.setCategory(category);
 
         return product;
