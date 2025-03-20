@@ -13,7 +13,6 @@ public class FakeStoreProductDTO {
     private String category;
     private double price;
     private String image;
-    private FakeStoreRatingDTO rating;
 
     public Product toProduct(){
         Product product = new Product();
@@ -25,5 +24,14 @@ public class FakeStoreProductDTO {
         product.setImageURL(this.getImage());
 
         return product;
+    }
+
+    public void fromProduct(Product requestedProduct) {
+        this.setId(requestedProduct.getId());
+        this.setPrice(requestedProduct.getPrice());
+        this.setTitle(requestedProduct.getTitle());
+        this.setDescription(requestedProduct.getDescription());
+        this.setCategory(requestedProduct.getCategory());
+        this.setImage(requestedProduct.getImageURL());
     }
 }

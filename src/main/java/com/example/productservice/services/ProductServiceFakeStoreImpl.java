@@ -1,15 +1,16 @@
 package com.example.productservice.services;
 
-import com.example.productservice.dtos.fakestoredtos.FakeStoreCreateProductRequestDTO;
-import com.example.productservice.dtos.fakestoredtos.FakeStoreCreateProductResponseDTO;
 import com.example.productservice.dtos.fakestoredtos.FakeStoreProductDTO;
-import com.example.productservice.dtos.mydtos.GetProductResponseDTO;
 import com.example.productservice.models.Product;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -28,42 +29,51 @@ public class ProductServiceFakeStoreImpl implements ProductServiceInterface {
 
         return responseDTO.toProduct();
     }
+
     @Override
-    public Product deleteProduct(int id) {
+    public String deleteProduct(int id) {
         restTemplate.delete("https://fakestoreapi.com/products/" + id);
-        return getSingleProduct(id);
+        return "Product with id : " + id + " is deleted successfully";
     }
+
     @Override
-    public Product updateProduct(Product product) {
-
-        restTemplate.put("https://fakestoreapi.com/products/" + product.getId(), product);
-
-        return getSingleProduct(product.getId());
+    public Product partialUpdateProduct(Product product) {
+        return null;
     }
+
     @Override
-    public void replaceProduct(Product product) {
+    public Product replaceProduct(Product product) {
 
+        FakeStoreProductDTO toReplaceDTO = new FakeStoreProductDTO();
+        restTemplate.put("https://fakestoreapi.com/products/" + product.getId(),
+                toReplaceDTO, FakeStoreProductDTO.class);
+
+        Product replacedProduct = this.getSingleProduct(product.getId());
+
+        return replacedProduct;
     }
+
+    @Override
     public Product createProduct(Product requestedProduct) {
-        FakeStoreCreateProductRequestDTO requestDTO = new FakeStoreCreateProductRequestDTO();
-        requestDTO.fromProduct(requestedProduct);
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+        fakeStoreProductDTO.fromProduct(requestedProduct);
 
+        FakeStoreProductDTO fakeStoreProductResponseDTO =
+                restTemplate.postForObject("https://fakestoreapi.com/products", fakeStoreProductDTO,
+                FakeStoreProductDTO.class);
 
-        FakeStoreCreateProductResponseDTO responseDTO =
-                restTemplate.postForObject("https://fakestoreapi.com/products",requestDTO,
-                FakeStoreCreateProductResponseDTO.class);
-
-        return responseDTO.toProduct();
+        return fakeStoreProductResponseDTO.toProduct();
     }
+
     @Override
     public List<Product> getAllProducts() {
-        ArrayList responseDTOList =
-            restTemplate.getForObject("https://fakestoreapi.com/products",
-            ArrayList.class);
+        FakeStoreProductDTO[] responseDTOArray  =
+            restTemplate.getForObject("https://fakestoreapi.com/products", FakeStoreProductDTO[].class);
 
         List<Product> products = new ArrayList<>();
-        for(Object each : responseDTOList){
-            //
+        for(int i=0; i<responseDTOArray.length; i++){
+            FakeStoreProductDTO eachFakeStoreProductDTO = responseDTOArray[i];
+            products.add(eachFakeStoreProductDTO.toProduct());
         }
 
         return products;

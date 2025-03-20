@@ -23,18 +23,19 @@ public class ProductServiceDBImpl implements ProductServiceInterface {
     }
 
     @Override
-    public Product deleteProduct(int id) {
+    public String deleteProduct(int id) {
 
         return null;
     }
 
     @Override
-    public Product updateProduct(Product product) {
+    public Product partialUpdateProduct(Product product) {
         return null;
     }
 
     @Override
-    public void replaceProduct(Product product) {
+    public Product replaceProduct(Product product) {
 
+        return null;
     }
 }

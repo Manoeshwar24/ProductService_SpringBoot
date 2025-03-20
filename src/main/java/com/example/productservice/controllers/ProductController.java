@@ -1,9 +1,6 @@
 package com.example.productservice.controllers;
 
-import com.example.productservice.dtos.mydtos.CreateProductRequestDTO;
-import com.example.productservice.dtos.mydtos.CreateProductResponseDTO;
-import com.example.productservice.dtos.mydtos.GetAllProductResponseDTO;
-import com.example.productservice.dtos.mydtos.GetProductResponseDTO;
+import com.example.productservice.dtos.mydtos.*;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductServiceInterface;
 import org.springframework.web.bind.annotation.*;
@@ -30,47 +27,88 @@ public class ProductController {
         List<Product> allProducts =  productService.getAllProducts();
         //move all the products data to the responseDTO
         for(Product each : allProducts){
-            responseDTO.getProductList().add(each);
-        }
+            ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+            responseProductDTO.fromProduct(each);
 
+            responseDTO.getProductDTOList().add(responseProductDTO);
+        }
+        responseDTO.setResponseMessage("Successfully retrieved all products");
         return responseDTO;
     }
+
     @GetMapping("/{id}")
-    public GetProductResponseDTO getSingleProduct(@PathVariable int id){
+    public GetSingleProductResponseDTO getSingleProduct(@PathVariable int id){
 
         Product requestedProduct = productService.getSingleProduct(id);
-        GetProductResponseDTO responseDTO = new GetProductResponseDTO();
-        responseDTO.fromProduct(requestedProduct);
+        GetSingleProductResponseDTO responseDTO = new GetSingleProductResponseDTO();
+        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+        responseProductDTO.fromProduct(requestedProduct);
 
+        responseDTO.setProductDTO(responseProductDTO);
+        responseDTO.setResponseMessage("Successfully retrieved single product with id: " + id);
         return responseDTO;
     }
+
     @PostMapping("")
     public CreateProductResponseDTO createProduct(@RequestBody CreateProductRequestDTO requestDTO){
         //get the product from requestDTO mapping
-        Product requestedProduct = requestDTO.toProduct();
+        Product toBeCreatedProduct = requestDTO.getRequestProductDTO().toProduct();
 
         //send the product to Product service and persist in the database
-        Product createdProduct = productService.createProduct(requestedProduct);
+        Product createdProduct = productService.createProduct(toBeCreatedProduct);
+
         CreateProductResponseDTO responseDTO = new CreateProductResponseDTO();
-        responseDTO.fromProduct(createdProduct);
+        RequestProductDTO afterRequestProductDTO = new RequestProductDTO();
+        afterRequestProductDTO.fromProduct(createdProduct);
+
+        responseDTO.setRequestProductDTO(afterRequestProductDTO);
+        responseDTO.setResponseMessage("Successfully created single product");
 
         return responseDTO;
     }
+
     @DeleteMapping("/{id}")
-    public CreateProductResponseDTO deleteProduct(@PathVariable int id){
-        CreateProductResponseDTO responseDTO = new CreateProductResponseDTO();
-        responseDTO.fromProduct(productService.deleteProduct(id));
+    public DeleteProductResponseDTO deleteProduct(@PathVariable int id){
+
+        String responseMessage = productService.deleteProduct(id);
+
+        DeleteProductResponseDTO responseDTO = new DeleteProductResponseDTO();
+        responseDTO.setResponseMessage(responseMessage);
 
         return responseDTO;
     }
+
     @PatchMapping("/{id}")
-    public CreateProductResponseDTO updateProduct(@PathVariable int id, @RequestBody CreateProductRequestDTO requestDTO){
-        Product toUpdateProduct = requestDTO.toProduct();
+    public PatchProductResponseDTO updateProduct(@PathVariable int id, @RequestBody PatchProductRequestDTO patchProductRequestDTO){
+        Product toUpdateProduct = patchProductRequestDTO.getProductDTO().toProduct();
 
-        CreateProductResponseDTO responseDTO = new CreateProductResponseDTO();
-        responseDTO.fromProduct(productService.updateProduct(toUpdateProduct));
+        Product updatedProduct = productService.partialUpdateProduct(toUpdateProduct);
 
-        return responseDTO;
+        PatchProductResponseDTO patchProductResponseDTO = new PatchProductResponseDTO();
+        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+        responseProductDTO.fromProduct(updatedProduct);
+
+        patchProductResponseDTO.setProductDTO(responseProductDTO);
+        patchProductResponseDTO.setResponseMessage("Successfully updated product");
+
+        return patchProductResponseDTO;
     }
-    public void replaceProduct(){}
+
+    @PutMapping("/{id}")
+    public PutProductResponseDTO replaceProduct(@PathVariable int id, @RequestBody PutProductRequestDTO putProductRequestDTO){
+
+        Product toReplaceProduct = putProductRequestDTO.getRequestProductDTO().toProduct();
+        //setting id from the path variable
+        toReplaceProduct.setId(id);
+        Product replacedProduct = productService.replaceProduct(toReplaceProduct);
+
+        PutProductResponseDTO putProductResponseDTO = new PutProductResponseDTO();
+        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+        responseProductDTO.fromProduct(replacedProduct);
+        putProductResponseDTO.setResponseProductDTO(responseProductDTO);
+        putProductResponseDTO.setResponseMessage("Successfully updated product");
+
+        return putProductResponseDTO;
+    }
+
 }

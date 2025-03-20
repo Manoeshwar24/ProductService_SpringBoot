@@ -6,8 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateProductResponseDTO {
-    @JsonProperty("product")
-    private RequestProductDTO requestProductDTO;
+public class DeleteProductResponseDTO {
     private String responseMessage;
 }

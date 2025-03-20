@@ -1,6 +1,6 @@
 package com.example.productservice.dtos.mydtos;
 
-import com.example.productservice.models.Product;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 public class GetAllProductResponseDTO {
-    private List<Product> productList;
+    @JsonProperty("productList")
+    private List<ResponseProductDTO> productDTOList;
+    private String responseMessage;
+
     public GetAllProductResponseDTO() {
-        this.productList = new ArrayList<Product>();
+        this.productDTOList = new ArrayList<>();
     }
 }
