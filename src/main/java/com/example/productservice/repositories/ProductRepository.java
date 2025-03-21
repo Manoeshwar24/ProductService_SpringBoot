@@ -19,4 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //delete by id
     @Override
     void deleteById(Long id);
+    //check if product exists by id
+    boolean existsById(Long id);
 }

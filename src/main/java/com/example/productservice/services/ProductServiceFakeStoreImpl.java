@@ -3,13 +3,13 @@ package com.example.productservice.services;
 import com.example.productservice.dtos.fakestoredtos.FakeStoreProductDTO;
 import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Product;
-import org.springframework.context.annotation.Primary;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductService")
 public class ProductServiceFakeStoreImpl implements ProductServiceInterface {
     private RestTemplate restTemplate;
 
@@ -36,15 +36,15 @@ public class ProductServiceFakeStoreImpl implements ProductServiceInterface {
     }
 
     @Override
-    public Product partialUpdateProduct(Product product) {
+    public Product partialUpdateProduct(Long id, Product product) throws ProductNotFoundException, BadRequestException {
         return null;
     }
 
     @Override
-    public Product replaceProduct(Product product) throws ProductNotFoundException{
+    public Product replaceProduct(Long id, Product product) throws ProductNotFoundException{
 
         FakeStoreProductDTO toReplaceDTO = new FakeStoreProductDTO();
-        restTemplate.put("https://fakestoreapi.com/products/" + product.getId(),
+        restTemplate.put("https://fakestoreapi.com/products/" + id,
                 toReplaceDTO, FakeStoreProductDTO.class);
 
         Product replacedProduct = this.getSingleProduct(product.getId());

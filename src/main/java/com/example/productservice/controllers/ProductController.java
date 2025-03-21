@@ -1,11 +1,12 @@
 package com.example.productservice.controllers;
 
 import com.example.productservice.dtos.mydtos.*;
-import com.example.productservice.dtos.mydtos.basedtos.RequestProductDTO;
 import com.example.productservice.dtos.mydtos.basedtos.ResponseProductDTO;
 import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductServiceInterface;
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,7 +19,7 @@ public class ProductController {
     private final RestTemplate restTemplate;
     private ProductServiceInterface productService;
 
-    public ProductController(ProductServiceInterface productService, RestTemplate restTemplate) {
+    public ProductController(@Qualifier("dbProductService") ProductServiceInterface productService, RestTemplate restTemplate) {
         this.productService = productService;
         this.restTemplate = restTemplate;
     }
@@ -61,10 +62,10 @@ public class ProductController {
         Product createdProduct = productService.createProduct(toBeCreatedProduct);
 
         CreateProductResponseDTO responseDTO = new CreateProductResponseDTO();
-        RequestProductDTO afterRequestProductDTO = new RequestProductDTO();
-        afterRequestProductDTO.fromProduct(createdProduct);
+        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+        responseProductDTO.fromProduct(createdProduct);
 
-        responseDTO.setRequestProductDTO(afterRequestProductDTO);
+        responseDTO.setResponseProductDTO(responseProductDTO);
         responseDTO.setResponseMessage("Successfully created single product");
 
         return responseDTO;
@@ -82,10 +83,11 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public PatchProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO){
+    public PatchProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO)
+            throws ProductNotFoundException, BadRequestException {
         Product toUpdateProduct = patchProductRequestDTO.getProductDTO().toProduct();
 
-        Product updatedProduct = productService.partialUpdateProduct(toUpdateProduct);
+        Product updatedProduct = productService.partialUpdateProduct(id, toUpdateProduct);
 
         PatchProductResponseDTO patchProductResponseDTO = new PatchProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
@@ -104,7 +106,7 @@ public class ProductController {
         Product toReplaceProduct = putProductRequestDTO.getRequestProductDTO().toProduct();
         //setting id from the path variable
         toReplaceProduct.setId(id);
-        Product replacedProduct = productService.replaceProduct(toReplaceProduct);
+        Product replacedProduct = productService.replaceProduct(id, toReplaceProduct);
 
         PutProductResponseDTO putProductResponseDTO = new PutProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
