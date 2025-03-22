@@ -1,4 +1,4 @@
-package com.example.productservice.dtos.mydtos;
+package com.example.productservice.dtos.mydtos.productdtos;
 
 import com.example.productservice.dtos.mydtos.basedtos.ResponseProductDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;

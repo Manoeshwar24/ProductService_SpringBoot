@@ -1,6 +1,5 @@
-package com.example.productservice.dtos.mydtos;
+package com.example.productservice.dtos.mydtos.productdtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 

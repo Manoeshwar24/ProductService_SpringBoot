@@ -1,4 +1,4 @@
-package com.example.productservice.dtos.mydtos;
+package com.example.productservice.dtos.mydtos.productdtos;
 
 import com.example.productservice.dtos.mydtos.basedtos.ResponseProductDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PatchProductResponseDTO {
+public class CreateProductResponseDTO {
     @JsonProperty("product")
-    private ResponseProductDTO productDTO;
+    private ResponseProductDTO responseProductDTO;
     private String responseMessage;
 }

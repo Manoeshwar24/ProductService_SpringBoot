@@ -1,6 +1,7 @@
 package com.example.productservice.advices;
 
 import com.example.productservice.dtos.errordto.ErrorResponseDTO;
+import com.example.productservice.exceptions.CategoryNotFoundException;
 import com.example.productservice.exceptions.ProductNotFoundException;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,15 @@ public class ExceptionAdvice {
         ErrorResponseDTO err = new ErrorResponseDTO();
         err.setMessage(ex.getMessage());
         err.setDateTime(LocalDateTime.now());
-        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCategoryNotFoundException(CategoryNotFoundException ex){
+        ErrorResponseDTO err = new ErrorResponseDTO();
+        err.setMessage(ex.getMessage());
+        err.setDateTime(LocalDateTime.now());
+
+        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
 }
