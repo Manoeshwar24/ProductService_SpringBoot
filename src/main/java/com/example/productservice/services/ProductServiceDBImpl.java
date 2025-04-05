@@ -105,7 +105,7 @@ public class ProductServiceDBImpl implements ProductServiceInterface {
     }
 
     @Override
-    public Product replaceProduct(Long id, Product product) throws ProductNotFoundException {
+    public Product updateProduct(Long id, Product product) throws ProductNotFoundException {
 
         //check if product exists
         if(!productRepository.existsById(id)) {

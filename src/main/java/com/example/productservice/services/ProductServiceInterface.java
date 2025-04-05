@@ -13,5 +13,5 @@ public interface ProductServiceInterface {
     Product getSingleProduct(Long id) throws ProductNotFoundException;
     String deleteProduct(Long id);
     Product partialUpdateProduct(Long id, Product product) throws ProductNotFoundException, BadRequestException;
-    Product replaceProduct(Long id, Product product) throws ProductNotFoundException;
+    Product updateProduct(Long id, Product product) throws ProductNotFoundException;
 }

@@ -41,7 +41,7 @@ public class ProductServiceFakeStoreImpl implements ProductServiceInterface {
     }
 
     @Override
-    public Product replaceProduct(Long id, Product product) throws ProductNotFoundException{
+    public Product updateProduct(Long id, Product product) throws ProductNotFoundException{
 
         FakeStoreProductDTO toReplaceDTO = new FakeStoreProductDTO();
         restTemplate.put("https://fakestoreapi.com/products/" + id,

@@ -7,6 +7,8 @@ import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductServiceInterface;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -83,7 +85,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public PatchProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO)
+    public PatchProductResponseDTO patchProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO)
             throws ProductNotFoundException, BadRequestException {
         Product toUpdateProduct = patchProductRequestDTO.getProductDTO().toProduct();
 
@@ -100,13 +102,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public PutProductResponseDTO replaceProduct(@PathVariable Long id, @RequestBody PutProductRequestDTO putProductRequestDTO)
+    public PutProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PutProductRequestDTO putProductRequestDTO)
     throws ProductNotFoundException {
 
         Product toReplaceProduct = putProductRequestDTO.getRequestProductDTO().toProduct();
         //setting id from the path variable
         toReplaceProduct.setId(id);
-        Product replacedProduct = productService.replaceProduct(id, toReplaceProduct);
+        Product replacedProduct = productService.updateProduct(id, toReplaceProduct);
 
         PutProductResponseDTO putProductResponseDTO = new PutProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
@@ -115,6 +117,13 @@ public class ProductController {
         putProductResponseDTO.setResponseMessage("Successfully updated product");
 
         return putProductResponseDTO;
+    }
+
+    @GetMapping("/healthcheck")
+    public ResponseEntity<Object> healthCheck() {
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

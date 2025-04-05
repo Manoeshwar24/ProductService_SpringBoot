@@ -14,10 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Category findCategoryByName(String name);
 
-    Category save(Category category);
-
-    boolean existsByName(String name);
-
     @Query(value = "select * from product where category_id = :id" +
             " order by price desc limit 3", nativeQuery = true)
     List<Product> findTopProducts(@Param("id") Long id);
