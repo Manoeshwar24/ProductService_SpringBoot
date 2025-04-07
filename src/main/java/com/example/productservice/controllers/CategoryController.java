@@ -2,13 +2,14 @@ package com.example.productservice.controllers;
 
 import com.example.productservice.dtos.mydtos.basedtos.ResponseCategoryDTO;
 import com.example.productservice.dtos.mydtos.basedtos.ResponseTopProductDTO;
-import com.example.productservice.dtos.mydtos.categorydtos.GetTopProductsDTO;
-import com.example.productservice.dtos.mydtos.categorydtos.PutCategoryRequestDTO;
-import com.example.productservice.dtos.mydtos.categorydtos.PutCategoryResponseDTO;
+import com.example.productservice.dtos.mydtos.categorydtos.*;
+import com.example.productservice.dtos.mydtos.productdtos.GetAllProductResponseDTO;
+import com.example.productservice.exceptions.CategoryAlreadyExistsException;
 import com.example.productservice.exceptions.CategoryNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.CategoryService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,15 +51,36 @@ public class CategoryController {
         return topProductsDTO;
     }
 
-    @GetMapping("/")
-    public List<ResponseCategoryDTO> getAllCategories() {
+    @GetMapping("")
+    public ResponseEntity<GetAllCategoryResponseDTO> getAllCategories() {
+        //create the responseDTO
+        GetAllCategoryResponseDTO responseDTO = new GetAllCategoryResponseDTO();
         List<ResponseCategoryDTO> allCategories = categoryService.getAllCategories();
-        return allCategories;
+        responseDTO.setCategoryDTOList(allCategories);
+        responseDTO.setResponseMessage("Successfully retrieved all categories");
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<GetCategoryResponseDTO> getCategory(@PathVariable Long categoryId)
+    throws CategoryNotFoundException {
+        //call the service to get the category
+        Category requestedCategory = categoryService.getCategory(categoryId);
+        //create the response DTO
+        GetCategoryResponseDTO responseDTO = new GetCategoryResponseDTO();
+        ResponseCategoryDTO responseCategoryDTO = new ResponseCategoryDTO();
+        responseCategoryDTO.fromCategory(requestedCategory);
+        responseDTO.setCategoryDTO(responseCategoryDTO);
+        responseDTO.setResponseMessage("Successfully retrieved category with id: " + categoryId);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<PutCategoryResponseDTO> updateCategory(@PathVariable Long categoryId,
-                                                                @RequestBody PutCategoryRequestDTO requestDTO){
+                                                                @RequestBody PutCategoryRequestDTO requestDTO)
+    throws CategoryNotFoundException {
         Category toUpdateCategory = requestDTO.getCategoryDTO().toCategory();
 
         //set the id of the category to be updated
@@ -72,6 +94,35 @@ public class CategoryController {
         ResponseCategoryDTO responseCategoryDTO = new ResponseCategoryDTO();
         responseCategoryDTO.fromCategory(updatedCategory);
         responseDTO.setCategoryDTO(responseCategoryDTO);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<PostCategoryResponseDTO> createCategory(@RequestBody PostCategoryRequestDTO requestDTO)
+    throws CategoryAlreadyExistsException {
+        //create the category object from the request DTO
+        Category toBeCreatedCategory = requestDTO.getCategoryDTO().toCategory();
+        //call the service to create the category
+        Category createdCategory = categoryService.createCategory(toBeCreatedCategory);
+        //create the response DTO
+        PostCategoryResponseDTO responseDTO = new PostCategoryResponseDTO();
+        ResponseCategoryDTO responseCategoryDTO = new ResponseCategoryDTO();
+        responseCategoryDTO.fromCategory(createdCategory);
+        responseDTO.setCategoryDTO(responseCategoryDTO);
+        responseDTO.setResponseMessage("Successfully created category");
+        //set the response message
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<DeleteCategoryResponseDTO> deleteCategory(@PathVariable Long categoryId)
+    throws CategoryNotFoundException {
+        //call the service to delete the category
+        String responseMessage = categoryService.deleteCategory(categoryId);
+        //create the response DTO
+        DeleteCategoryResponseDTO responseDTO = new DeleteCategoryResponseDTO();
+        responseDTO.setResponseMessage(responseMessage);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

@@ -27,103 +27,78 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public GetAllProductResponseDTO getAllProducts(){
-
+    public ResponseEntity<GetAllProductResponseDTO> getAllProducts() {
         GetAllProductResponseDTO responseDTO = new GetAllProductResponseDTO();
-        List<Product> allProducts =  productService.getAllProducts();
-        //move all the products data to the responseDTO
-        for(Product each : allProducts){
+        List<Product> allProducts = productService.getAllProducts();
+        for (Product each : allProducts) {
             ResponseProductDTO responseProductDTO = new ResponseProductDTO();
             responseProductDTO.fromProduct(each);
-
             responseDTO.getProductDTOList().add(responseProductDTO);
         }
         responseDTO.setResponseMessage("Successfully retrieved all products");
-        return responseDTO;
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public GetSingleProductResponseDTO getSingleProduct(@PathVariable Long id) throws ProductNotFoundException {
-
+    public ResponseEntity<GetSingleProductResponseDTO> getSingleProduct(@PathVariable Long id) throws ProductNotFoundException {
         Product requestedProduct = productService.getSingleProduct(id);
         GetSingleProductResponseDTO responseDTO = new GetSingleProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
         responseProductDTO.fromProduct(requestedProduct);
-
         responseDTO.setProductDTO(responseProductDTO);
         responseDTO.setResponseMessage("Successfully retrieved single product with id: " + id);
-        return responseDTO;
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PostMapping("")
-    public CreateProductResponseDTO createProduct(@RequestBody CreateProductRequestDTO requestDTO){
-        //get the product from requestDTO mapping
+    public ResponseEntity<CreateProductResponseDTO> createProduct(@RequestBody CreateProductRequestDTO requestDTO) {
         Product toBeCreatedProduct = requestDTO.getRequestProductDTO().toProduct();
-
-        //send the product to Product service and persist in the database
         Product createdProduct = productService.createProduct(toBeCreatedProduct);
-
         CreateProductResponseDTO responseDTO = new CreateProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
         responseProductDTO.fromProduct(createdProduct);
-
         responseDTO.setResponseProductDTO(responseProductDTO);
         responseDTO.setResponseMessage("Successfully created single product");
-
-        return responseDTO;
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public DeleteProductResponseDTO deleteProduct(@PathVariable Long id){
-
+    public ResponseEntity<DeleteProductResponseDTO> deleteProduct(@PathVariable Long id) {
         String responseMessage = productService.deleteProduct(id);
-
         DeleteProductResponseDTO responseDTO = new DeleteProductResponseDTO();
         responseDTO.setResponseMessage(responseMessage);
-
-        return responseDTO;
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public PatchProductResponseDTO patchProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO)
+    public ResponseEntity<PatchProductResponseDTO> patchProduct(@PathVariable Long id, @RequestBody PatchProductRequestDTO patchProductRequestDTO)
             throws ProductNotFoundException, BadRequestException {
         Product toUpdateProduct = patchProductRequestDTO.getProductDTO().toProduct();
-
         Product updatedProduct = productService.partialUpdateProduct(id, toUpdateProduct);
-
         PatchProductResponseDTO patchProductResponseDTO = new PatchProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
         responseProductDTO.fromProduct(updatedProduct);
-
         patchProductResponseDTO.setProductDTO(responseProductDTO);
         patchProductResponseDTO.setResponseMessage("Successfully updated product");
-
-        return patchProductResponseDTO;
+        return new ResponseEntity<>(patchProductResponseDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public PutProductResponseDTO updateProduct(@PathVariable Long id, @RequestBody PutProductRequestDTO putProductRequestDTO)
-    throws ProductNotFoundException {
-
+    public ResponseEntity<PutProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody PutProductRequestDTO putProductRequestDTO)
+            throws ProductNotFoundException {
         Product toReplaceProduct = putProductRequestDTO.getRequestProductDTO().toProduct();
-        //setting id from the path variable
         toReplaceProduct.setId(id);
         Product replacedProduct = productService.updateProduct(id, toReplaceProduct);
-
         PutProductResponseDTO putProductResponseDTO = new PutProductResponseDTO();
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
         responseProductDTO.fromProduct(replacedProduct);
         putProductResponseDTO.setResponseProductDTO(responseProductDTO);
         putProductResponseDTO.setResponseMessage("Successfully updated product");
-
-        return putProductResponseDTO;
+        return new ResponseEntity<>(putProductResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/healthcheck")
     public ResponseEntity<Object> healthCheck() {
-
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
