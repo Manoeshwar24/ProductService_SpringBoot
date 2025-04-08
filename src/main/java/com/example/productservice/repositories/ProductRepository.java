@@ -21,4 +21,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void deleteById(Long id);
     //check if product exists by id
     boolean existsById(Long id);
+    //sort the list of products
+    List<Product> findAllByTitleIgnoreCaseOrderByPriceAsc(String title);
 }

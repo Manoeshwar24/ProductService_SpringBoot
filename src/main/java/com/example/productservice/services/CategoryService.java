@@ -101,4 +101,32 @@ public class CategoryService {
 
         return requestedCategory.get();
     }
+
+    public Category patchCategory(Category toBePatchedCategory)
+    throws CategoryNotFoundException {
+        //check if category doesn't exist
+        Optional<Category> categoryFromDB = categoryRepository.findById(toBePatchedCategory.getId());
+        if(categoryFromDB.isEmpty()) {
+            //if yes, throw exception
+            throw new CategoryNotFoundException("Category not found with id " + toBePatchedCategory.getId());
+        }
+        else{
+            //else, patch the category
+            Category patchedCategory = patchCategoryWithDTO(toBePatchedCategory, categoryFromDB.get());
+            //update the last updated date
+            toBePatchedCategory.setUpdatedDate(LocalDateTime.now());
+            //save the category in the db
+            return categoryRepository.save(toBePatchedCategory);
+        }
+    }
+
+    private Category patchCategoryWithDTO(Category toBePatchedCategory, Category dbCategory) {
+        if(toBePatchedCategory.getName() == null){
+            toBePatchedCategory.setName(dbCategory.getName());
+        }
+        if(toBePatchedCategory.getDescription() == null){
+            toBePatchedCategory.setDescription(dbCategory.getDescription());
+        }
+        return toBePatchedCategory;
+    }
 }

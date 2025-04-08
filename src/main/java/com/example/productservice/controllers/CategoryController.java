@@ -126,4 +126,24 @@ public class CategoryController {
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
+    @PatchMapping("/{categoryId}")
+    public ResponseEntity<PatchCategoryResponseDTO> patchCategory(@PathVariable Long categoryId,
+                                            @RequestBody PatchCategoryRequestDTO requestDTO)
+    throws CategoryNotFoundException{
+        //create the category object from the request DTO
+        Category toBePatchedCategory = requestDTO.getRequestCategoryDTO().toCategory();
+        //set the id of the category to be patched
+        toBePatchedCategory.setId(categoryId);
+        //call the service to patch the category
+        Category patchedCategory = categoryService.patchCategory(toBePatchedCategory);
+        //create the response DTO
+        PatchCategoryResponseDTO responseDTO = new PatchCategoryResponseDTO();
+        ResponseCategoryDTO responseCategoryDTO = new ResponseCategoryDTO();
+        responseCategoryDTO.fromCategory(patchedCategory);
+        responseDTO.setCategoryDTO(responseCategoryDTO);
+        responseDTO.setResponseMessage("Successfully patched category with id: " + categoryId);
+        //set the response message
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }
