@@ -22,5 +22,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //check if product exists by id
     boolean existsById(Long id);
     //sort the list of products
-    List<Product> findAllByTitleIgnoreCaseOrderByPriceAsc(String title);
+    //by price ascending
+    List<Product> findAllByTitleIgnoreCaseOrderByPriceAsc(String query);
+    //by price descending
+    List<Product> findAllByTitleIgnoreCaseOrderByPriceDesc(String query);
+    //by name ascending
+    List<Product> findAllByTitleIgnoreCaseOrderByTitleAsc(String query);
+    //by name descending
+    List<Product> findAllByTitleIgnoreCaseOrderByTitleDesc(String query);
+
+    List<Product> findAllByTitleIgnoreCase(String query);
 }

@@ -11,6 +11,8 @@ public class SortByProductPriceHighToLow implements SortProductInterface {
 
     @Override
     public List<Product> findAllAndSort(String query) {
-        return List.of();
+        //find all products by title and sort by price descending
+        List<Product> productList = productRepository.findAllByTitleIgnoreCaseOrderByPriceDesc(query);
+        return productList;
     }
 }
