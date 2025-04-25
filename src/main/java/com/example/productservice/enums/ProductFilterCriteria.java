@@ -9,15 +9,11 @@ public enum ProductFilterCriteria {
         if (filter == null || filter.isEmpty()) {
             throw new IllegalArgumentException("Filter criteria cannot be null or empty");
         }
-        switch (filter.toLowerCase()) {
-            case "price_filter":
-                return PRICE_FILTER;
-            case "title_filter":
-                return TITLE_FILTER;
-            case "category_filter":
-                return CATEGORY_FILTER;
-            default:
-                throw new IllegalArgumentException("Invalid filter criteria: " + filter);
-        }
+        return switch (filter.toLowerCase()) {
+            case "price_filter" -> PRICE_FILTER;
+            case "title_filter" -> TITLE_FILTER;
+            case "category_filter" -> CATEGORY_FILTER;
+            default -> throw new IllegalArgumentException("Invalid filter criteria: " + filter);
+        };
     }
 }

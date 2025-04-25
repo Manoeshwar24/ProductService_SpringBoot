@@ -1,19 +1,21 @@
 package com.example.productservice.strategies.sortingstrategies.product;
 
 import com.example.productservice.models.Product;
-import com.example.productservice.repositories.ProductRepository;
-import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class SortByProductTitleLowToHigh implements SortProductInterface {
-    private ProductRepository productRepository;
-    @Override
-    public List<Product> findAllAndSort(String query) {
 
-        //find all products by title and sort by title ascending
-        List<Product> productList = productRepository.findAllByTitleIgnoreCaseOrderByTitleAsc(query);
-        return productList;
+public class SortByProductTitleLowToHigh implements SortProductInterface {
+
+    @Override
+    public void apply(List<Product> productList) {
+
+        //sort the productList based on the title in ascending order
+        productList.sort((product1, product2) -> {
+            String title1 = product1.getTitle();
+            String title2 = product2.getTitle();
+            return title1.compareTo(title2);
+        });
     }
 }

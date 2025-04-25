@@ -1,6 +1,8 @@
 package com.example.productservice.repositories;
 
 import com.example.productservice.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,17 +21,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //delete by id
     @Override
     void deleteById(Long id);
-    //check if product exists by id
+    //check if the product exists by id
     boolean existsById(Long id);
-    //sort the list of products
-    //by price ascending
-    List<Product> findAllByTitleIgnoreCaseOrderByPriceAsc(String query);
-    //by price descending
-    List<Product> findAllByTitleIgnoreCaseOrderByPriceDesc(String query);
-    //by name ascending
-    List<Product> findAllByTitleIgnoreCaseOrderByTitleAsc(String query);
-    //by name descending
-    List<Product> findAllByTitleIgnoreCaseOrderByTitleDesc(String query);
 
+    Page<Product> findAllByTitleIgnoreCase(String query, Pageable pageable);
     List<Product> findAllByTitleIgnoreCase(String query);
+
+    List<Product> findAllByTitleIn(List<String> filterValues);
+    List<Product> findAllByCategory_NameIn(List<String> filterValues);
+    List<Product> findAllByPriceIn(List<Double> filterValues);
 }

@@ -10,20 +10,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    private final ProductServiceInterface productService;
 
-    private final RestTemplate restTemplate;
-    private ProductServiceInterface productService;
-
-    public ProductController(@Qualifier("dbProductService") ProductServiceInterface productService, RestTemplate restTemplate) {
+    public ProductController(@Qualifier("dbProductService") ProductServiceInterface productService) {
         this.productService = productService;
-        this.restTemplate = restTemplate;
     }
 
     @GetMapping("")
@@ -95,10 +91,5 @@ public class ProductController {
         putProductResponseDTO.setResponseProductDTO(responseProductDTO);
         putProductResponseDTO.setResponseMessage("Successfully updated product");
         return new ResponseEntity<>(putProductResponseDTO, HttpStatus.OK);
-    }
-
-    @GetMapping("/healthcheck")
-    public ResponseEntity<Object> healthCheck() {
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

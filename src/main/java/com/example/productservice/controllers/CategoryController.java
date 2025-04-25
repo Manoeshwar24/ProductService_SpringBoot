@@ -3,13 +3,11 @@ package com.example.productservice.controllers;
 import com.example.productservice.dtos.mydtos.basedtos.ResponseCategoryDTO;
 import com.example.productservice.dtos.mydtos.basedtos.ResponseTopProductDTO;
 import com.example.productservice.dtos.mydtos.categorydtos.*;
-import com.example.productservice.dtos.mydtos.productdtos.GetAllProductResponseDTO;
 import com.example.productservice.exceptions.CategoryAlreadyExistsException;
 import com.example.productservice.exceptions.CategoryNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.CategoryService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +24,10 @@ public class CategoryController {
     }
 
     @GetMapping("/topProducts/{id}")
-    public GetTopProductsDTO getTopProducts(@PathVariable Long id) throws CategoryNotFoundException {
+    public ResponseEntity<GetTopProductsDTO> getTopProducts(@PathVariable Long id) throws CategoryNotFoundException {
 
         List<Product> topProducts = categoryService.getTopProducts(id);
-        //convert the products list to responseDTO
+        //convert the product list to responseDTO
         GetTopProductsDTO topProductsDTO = new GetTopProductsDTO();
         List<ResponseTopProductDTO> productDTO = new ArrayList<>();
         for (Product product : topProducts) {
@@ -48,7 +46,7 @@ public class CategoryController {
             topProductsDTO.getTopProducts().add(responseTopProductDTO);
         }
 
-        return topProductsDTO;
+        return new ResponseEntity<>(topProductsDTO, HttpStatus.OK);
     }
 
     @GetMapping("")
